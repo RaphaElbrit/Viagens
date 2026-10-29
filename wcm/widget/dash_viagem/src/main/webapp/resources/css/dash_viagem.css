@@ -1,0 +1,5 @@
+.dash-viagem .dash-viagem-resumo { margin-bottom: 15px; }
+.dash-viagem .dash-viagem-valor { font-size: 26px; font-weight: bold; color: #337ab7; }
+.dash-viagem .dash-viagem-rotulo { font-size: 12px; color: #777; }
+.dash-viagem .dash-viagem-grafico { position: relative; width: 100%; }
+.dash-viagem .dash-viagem-grafico canvas { width: 100% !important; }

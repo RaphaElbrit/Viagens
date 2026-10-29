@@ -1,0 +1,470 @@
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<link type="text/css" rel="stylesheet" href="/style-guide/css/fluig-style-guide-flat.min.css"/>
+	<script type="text/javascript" src="/portal/resources/js/jquery/jquery.js"></script>
+	<script type="text/javascript" src="/portal/resources/js/jquery/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="/portal/resources/js/mustache/mustache-min.js"></script>
+	<script type="text/javascript" src="/style-guide/js/fluig-style-guide.min.js" charset="utf-8"></script>
+	<style>
+		.fluig-style-guide .panel-heading .panel-title { font-weight: bold; }
+		.fluig-style-guide .obrigatorio:after { content: " *"; color: #d9534f; }
+		.fluig-style-guide .table-paifilho td { vertical-align: middle; }
+		.fluig-style-guide .col-acao { width: 50px; text-align: center; }
+		.fluig-style-guide .total-despesas { font-size: 16px; font-weight: bold; }
+	</style>
+</head>
+<body>
+<div class="fluig-style-guide">
+<form name="form" role="form">
+
+	<input type="hidden" name="numSolicitacao" id="numSolicitacao"/>
+	<input type="hidden" name="matriculaSolicitante" id="matriculaSolicitante"/>
+	<input type="hidden" name="atividadeAtual" id="atividadeAtual"/>
+
+	<div class="page-header">
+		<h2>Solicitação de Aprovação de Viagem</h2>
+		<small>Campos marcados com <span class="text-danger">*</span> são obrigatórios.</small>
+	</div>
+
+	<!-- ================= 1. SOLICITANTE ================= -->
+	<div class="panel panel-default">
+		<div class="panel-heading"><h3 class="panel-title">1. Dados do Solicitante</h3></div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="form-group col-md-4">
+					<label for="nomeSolicitante">Solicitante</label>
+					<input type="text" class="form-control" name="nomeSolicitante" id="nomeSolicitante" readonly/>
+				</div>
+				<div class="form-group col-md-4">
+					<label for="emailSolicitante">E-mail</label>
+					<input type="text" class="form-control" name="emailSolicitante" id="emailSolicitante" readonly/>
+				</div>
+				<div class="form-group col-md-2">
+					<label for="dataSolicitacao">Data da Solicitação</label>
+					<input type="text" class="form-control" name="dataSolicitacao" id="dataSolicitacao" readonly/>
+				</div>
+				<div class="form-group col-md-2">
+					<label for="telefoneSolicitante" class="obrigatorio">Telefone</label>
+					<input type="text" class="form-control" name="telefoneSolicitante" id="telefoneSolicitante" mask="(00) 00000-0000"/>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-4">
+					<label for="departamento" class="obrigatorio">Departamento</label>
+					<input type="text" class="form-control" name="departamento" id="departamento" maxlength="60"/>
+				</div>
+				<div class="form-group col-md-4">
+					<label for="centroCusto" class="obrigatorio">Centro de Custo</label>
+					<input type="text" class="form-control" name="centroCusto" id="centroCusto" maxlength="30"/>
+				</div>
+				<div class="form-group col-md-4">
+					<label for="gestorImediato" class="obrigatorio">Gestor Imediato (Aprovador)</label>
+					<input type="text" class="form-control" name="gestorImediato" id="gestorImediato" maxlength="100"/>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-4">
+					<label for="viajanteEhSolicitante">A viagem é para o próprio solicitante?</label>
+					<select class="form-control" name="viajanteEhSolicitante" id="viajanteEhSolicitante">
+						<option value="S">Sim</option>
+						<option value="N">Não, para outra pessoa</option>
+					</select>
+				</div>
+			</div>
+			<div class="row" id="blocoViajante" style="display:none;">
+				<div class="form-group col-md-4">
+					<label for="nomeViajante" class="obrigatorio">Nome do Viajante</label>
+					<input type="text" class="form-control" name="nomeViajante" id="nomeViajante" maxlength="100"/>
+				</div>
+				<div class="form-group col-md-3">
+					<label for="cpfViajante" class="obrigatorio">CPF</label>
+					<input type="text" class="form-control" name="cpfViajante" id="cpfViajante" mask="000.000.000-00"/>
+				</div>
+				<div class="form-group col-md-2">
+					<label for="nascimentoViajante">Data de Nascimento</label>
+					<input type="text" class="form-control fluig-data" name="nascimentoViajante" id="nascimentoViajante" mask="00/00/0000"/>
+				</div>
+				<div class="form-group col-md-3">
+					<label for="vinculoViajante">Vínculo</label>
+					<select class="form-control" name="vinculoViajante" id="vinculoViajante">
+						<option value="COLABORADOR">Colaborador</option>
+						<option value="TERCEIRO">Terceiro / Prestador</option>
+						<option value="CLIENTE">Cliente</option>
+						<option value="CONVIDADO">Convidado</option>
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- ================= 2. DADOS DA VIAGEM ================= -->
+	<div class="panel panel-default">
+		<div class="panel-heading"><h3 class="panel-title">2. Dados da Viagem</h3></div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="form-group col-md-3">
+					<label for="tipoViagem" class="obrigatorio">Tipo de Viagem</label>
+					<select class="form-control" name="tipoViagem" id="tipoViagem">
+						<option value="">Selecione...</option>
+						<option value="NACIONAL">Nacional</option>
+						<option value="INTERNACIONAL">Internacional</option>
+					</select>
+				</div>
+				<div class="form-group col-md-3">
+					<label for="motivoViagem" class="obrigatorio">Motivo</label>
+					<select class="form-control" name="motivoViagem" id="motivoViagem">
+						<option value="">Selecione...</option>
+						<option value="VISITA_CLIENTE">Visita a Cliente</option>
+						<option value="REUNIAO">Reunião Interna</option>
+						<option value="TREINAMENTO">Treinamento / Capacitação</option>
+						<option value="EVENTO">Evento / Feira / Congresso</option>
+						<option value="IMPLANTACAO">Implantação / Suporte Técnico</option>
+						<option value="AUDITORIA">Auditoria</option>
+						<option value="OUTROS">Outros</option>
+					</select>
+				</div>
+				<div class="form-group col-md-3">
+					<label for="dataIda" class="obrigatorio">Data de Ida</label>
+					<input type="text" class="form-control fluig-data" name="dataIda" id="dataIda" mask="00/00/0000"/>
+				</div>
+				<div class="form-group col-md-3">
+					<label for="dataVolta" class="obrigatorio">Data de Volta</label>
+					<input type="text" class="form-control fluig-data" name="dataVolta" id="dataVolta" mask="00/00/0000"/>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-4">
+					<label for="cidadeOrigem" class="obrigatorio">Cidade de Origem</label>
+					<input type="text" class="form-control" name="cidadeOrigem" id="cidadeOrigem" maxlength="60"/>
+				</div>
+				<div class="form-group col-md-4">
+					<label for="cidadeDestino" class="obrigatorio">Cidade de Destino</label>
+					<input type="text" class="form-control" name="cidadeDestino" id="cidadeDestino" maxlength="60"/>
+				</div>
+				<div class="form-group col-md-2">
+					<label for="qtdDias">Duração (dias)</label>
+					<input type="text" class="form-control" name="qtdDias" id="qtdDias" readonly/>
+				</div>
+				<div class="form-group col-md-2">
+					<label for="prioridade">Prioridade</label>
+					<select class="form-control" name="prioridade" id="prioridade">
+						<option value="NORMAL">Normal</option>
+						<option value="URGENTE">Urgente</option>
+					</select>
+				</div>
+			</div>
+			<div class="row" id="blocoInternacional" style="display:none;">
+				<div class="form-group col-md-3">
+					<label for="paisDestino" class="obrigatorio">País de Destino</label>
+					<input type="text" class="form-control" name="paisDestino" id="paisDestino" maxlength="60"/>
+				</div>
+				<div class="form-group col-md-3">
+					<label for="numPassaporte" class="obrigatorio">Nº do Passaporte</label>
+					<input type="text" class="form-control" name="numPassaporte" id="numPassaporte" maxlength="20"/>
+				</div>
+				<div class="form-group col-md-3">
+					<label for="validadePassaporte" class="obrigatorio">Validade do Passaporte</label>
+					<input type="text" class="form-control fluig-data" name="validadePassaporte" id="validadePassaporte" mask="00/00/0000"/>
+				</div>
+				<div class="form-group col-md-3">
+					<label for="necessitaVisto">Necessita de Visto?</label>
+					<select class="form-control" name="necessitaVisto" id="necessitaVisto">
+						<option value="N">Não</option>
+						<option value="S">Sim</option>
+					</select>
+				</div>
+			</div>
+			<div class="row" id="blocoUrgencia" style="display:none;">
+				<div class="form-group col-md-12">
+					<label for="justificativaUrgencia" class="obrigatorio">Justificativa da Urgência</label>
+					<textarea class="form-control" name="justificativaUrgencia" id="justificativaUrgencia" rows="2" maxlength="1000"></textarea>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-12">
+					<label for="objetivoViagem" class="obrigatorio">Objetivo / Justificativa da Viagem</label>
+					<textarea class="form-control" name="objetivoViagem" id="objetivoViagem" rows="3" maxlength="2000"></textarea>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- ================= 3. TRANSPORTE ================= -->
+	<div class="panel panel-default">
+		<div class="panel-heading"><h3 class="panel-title">3. Transporte</h3></div>
+		<div class="panel-body">
+			<label>Trechos</label>
+			<table class="table table-bordered table-condensed table-paifilho" tablename="tbTrechos" noaddbutton="true" id="tbTrechos">
+				<thead>
+					<tr>
+						<th>Meio de Transporte</th>
+						<th>Origem</th>
+						<th>Destino</th>
+						<th>Data</th>
+						<th>Horário Preferencial</th>
+						<th class="col-acao"></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+							<select class="form-control" name="trechoMeio">
+								<option value="AEREO">Aéreo</option>
+								<option value="RODOVIARIO">Ônibus</option>
+								<option value="VEICULO_EMPRESA">Veículo da Empresa</option>
+								<option value="VEICULO_PROPRIO">Veículo Próprio</option>
+								<option value="LOCACAO">Carro Alugado</option>
+							</select>
+						</td>
+						<td><input type="text" class="form-control" name="trechoOrigem" maxlength="60"/></td>
+						<td><input type="text" class="form-control" name="trechoDestino" maxlength="60"/></td>
+						<td><input type="text" class="form-control fluig-data" name="trechoData" mask="00/00/0000"/></td>
+						<td>
+							<select class="form-control" name="trechoHorario">
+								<option value="INDIFERENTE">Indiferente</option>
+								<option value="MANHA">Manhã</option>
+								<option value="TARDE">Tarde</option>
+								<option value="NOITE">Noite</option>
+							</select>
+						</td>
+						<td class="col-acao">
+							<button type="button" class="btn btn-danger btn-sm btn-acao" onclick="fnWdkRemoveChild(this)" title="Remover">
+								<i class="fluigicon fluigicon-trash icon-sm"></i>
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<button type="button" class="btn btn-default btn-acao" onclick="adicionarTrecho()">
+				<i class="fluigicon fluigicon-plus icon-sm"></i> Adicionar Trecho
+			</button>
+		</div>
+	</div>
+
+	<!-- ================= 4. HOSPEDAGEM ================= -->
+	<div class="panel panel-default">
+		<div class="panel-heading"><h3 class="panel-title">4. Hospedagem</h3></div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="form-group col-md-3">
+					<label for="necessitaHospedagem">Necessita de Hospedagem?</label>
+					<select class="form-control" name="necessitaHospedagem" id="necessitaHospedagem">
+						<option value="N">Não</option>
+						<option value="S">Sim</option>
+					</select>
+				</div>
+			</div>
+			<div class="row" id="blocoHospedagem" style="display:none;">
+				<div class="form-group col-md-3">
+					<label for="checkin" class="obrigatorio">Check-in</label>
+					<input type="text" class="form-control fluig-data" name="checkin" id="checkin" mask="00/00/0000"/>
+				</div>
+				<div class="form-group col-md-3">
+					<label for="checkout" class="obrigatorio">Check-out</label>
+					<input type="text" class="form-control fluig-data" name="checkout" id="checkout" mask="00/00/0000"/>
+				</div>
+				<div class="form-group col-md-6">
+					<label for="hotelPreferencia">Hotel de Preferência / Região</label>
+					<input type="text" class="form-control" name="hotelPreferencia" id="hotelPreferencia" maxlength="150"/>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- ================= 5. ESTIMATIVA DE DESPESAS ================= -->
+	<div class="panel panel-default">
+		<div class="panel-heading"><h3 class="panel-title">5. Estimativa de Despesas</h3></div>
+		<div class="panel-body">
+			<table class="table table-bordered table-condensed table-paifilho" tablename="tbDespesas" noaddbutton="true" id="tbDespesas">
+				<thead>
+					<tr>
+						<th>Categoria</th>
+						<th>Descrição</th>
+						<th>Valor Estimado (R$)</th>
+						<th class="col-acao"></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+							<select class="form-control" name="despesaCategoria">
+								<option value="PASSAGEM">Passagem</option>
+								<option value="HOSPEDAGEM">Hospedagem</option>
+								<option value="ALIMENTACAO">Alimentação</option>
+								<option value="TRANSPORTE_LOCAL">Transporte Local / Táxi</option>
+								<option value="LOCACAO">Locação de Veículo</option>
+								<option value="COMBUSTIVEL">Combustível / Pedágio</option>
+								<option value="INSCRICAO">Inscrição em Evento</option>
+								<option value="OUTROS">Outros</option>
+							</select>
+						</td>
+						<td><input type="text" class="form-control" name="despesaDescricao" maxlength="100"/></td>
+						<td><input type="text" class="form-control campo-moeda despesa-valor" name="despesaValor" mask="#.##0,00" data-reverse="true"/></td>
+						<td class="col-acao">
+							<button type="button" class="btn btn-danger btn-sm btn-acao" onclick="fnWdkRemoveChild(this); calcularTotal();" title="Remover">
+								<i class="fluigicon fluigicon-trash icon-sm"></i>
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<button type="button" class="btn btn-default btn-acao" onclick="wdkAddChild('tbDespesas')">
+				<i class="fluigicon fluigicon-plus icon-sm"></i> Adicionar Despesa
+			</button>
+
+			<div class="row" style="margin-top:15px;">
+				<div class="form-group col-md-4">
+					<label for="totalEstimado">Total Estimado</label>
+					<div class="input-group">
+						<span class="input-group-addon">R$</span>
+						<input type="text" class="form-control total-despesas" name="totalEstimado" id="totalEstimado" readonly/>
+					</div>
+				</div>
+				<div class="form-group col-md-4">
+					<label for="solicitaAdiantamento">Solicita Adiantamento?</label>
+					<select class="form-control" name="solicitaAdiantamento" id="solicitaAdiantamento">
+						<option value="N">Não</option>
+						<option value="S">Sim</option>
+					</select>
+				</div>
+				<div class="form-group col-md-4" id="blocoAdiantamento" style="display:none;">
+					<label for="valorAdiantamento" class="obrigatorio">Valor do Adiantamento</label>
+					<div class="input-group">
+						<span class="input-group-addon">R$</span>
+						<input type="text" class="form-control campo-moeda" name="valorAdiantamento" id="valorAdiantamento" mask="#.##0,00" data-reverse="true"/>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-12">
+					<label for="observacoes">Observações</label>
+					<textarea class="form-control" name="observacoes" id="observacoes" rows="3" maxlength="4000"></textarea>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- ================= 6. APROVAÇÃO DO GESTOR ================= -->
+	<div class="panel panel-default" id="painelAprovacao">
+		<div class="panel-heading"><h3 class="panel-title">6. Aprovação do Gestor</h3></div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="form-group col-md-3">
+					<label for="decisaoGestor" class="obrigatorio">Decisão</label>
+					<select class="form-control campo-aprovacao" name="decisaoGestor" id="decisaoGestor">
+						<option value="">Selecione...</option>
+						<option value="APROVADO">Aprovado</option>
+						<option value="REPROVADO">Reprovado</option>
+						<option value="AJUSTE">Devolver para Ajuste</option>
+					</select>
+				</div>
+				<div class="form-group col-md-5">
+					<label for="aprovador">Aprovador</label>
+					<input type="text" class="form-control" name="aprovador" id="aprovador" readonly/>
+				</div>
+				<div class="form-group col-md-4">
+					<label for="dataAprovacao">Data da Decisão</label>
+					<input type="text" class="form-control" name="dataAprovacao" id="dataAprovacao" readonly/>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-12">
+					<label for="parecerGestor" id="lblParecerGestor">Parecer</label>
+					<textarea class="form-control campo-aprovacao" name="parecerGestor" id="parecerGestor" rows="3" maxlength="2000"></textarea>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</form>
+</div>
+
+<script type="text/javascript">
+	$(function () {
+		$(".fluig-data").each(function () {
+			FLUIGC.calendar(this);
+		});
+
+		$("#viajanteEhSolicitante").on("change", toggleCamposViajante);
+		$("#tipoViagem").on("change", toggleCamposInternacional);
+		$("#prioridade").on("change", toggleCamposUrgencia);
+		$("#necessitaHospedagem").on("change", toggleCamposHospedagem);
+		$("#solicitaAdiantamento").on("change", toggleCamposAdiantamento);
+		$("#decisaoGestor").on("change", toggleParecerObrigatorio);
+		$("#dataIda, #dataVolta").on("change blur", calcularDias);
+		$(document).on("change blur", ".despesa-valor", calcularTotal);
+
+		toggleCamposViajante();
+		toggleCamposInternacional();
+		toggleCamposUrgencia();
+		toggleCamposHospedagem();
+		toggleCamposAdiantamento();
+		toggleParecerObrigatorio();
+		calcularDias();
+		calcularTotal();
+	});
+
+	function toggleCamposViajante() {
+		$("#blocoViajante").toggle($("#viajanteEhSolicitante").val() === "N");
+	}
+
+	function toggleCamposInternacional() {
+		$("#blocoInternacional").toggle($("#tipoViagem").val() === "INTERNACIONAL");
+	}
+
+	function toggleCamposUrgencia() {
+		$("#blocoUrgencia").toggle($("#prioridade").val() === "URGENTE");
+	}
+
+	function toggleCamposHospedagem() {
+		$("#blocoHospedagem").toggle($("#necessitaHospedagem").val() === "S");
+	}
+
+	function toggleCamposAdiantamento() {
+		$("#blocoAdiantamento").toggle($("#solicitaAdiantamento").val() === "S");
+	}
+
+	function toggleParecerObrigatorio() {
+		var decisao = $("#decisaoGestor").val();
+		$("#lblParecerGestor").toggleClass("obrigatorio", decisao === "REPROVADO" || decisao === "AJUSTE");
+	}
+
+	function adicionarTrecho() {
+		var idx = wdkAddChild("tbTrechos");
+		FLUIGC.calendar($("[name='trechoData___" + idx + "']")[0]);
+	}
+
+	function calcularDias() {
+		var ida = paraData($("#dataIda").val());
+		var volta = paraData($("#dataVolta").val());
+		if (ida && volta && volta >= ida) {
+			$("#qtdDias").val(Math.round((volta - ida) / 86400000) + 1);
+		} else {
+			$("#qtdDias").val("");
+		}
+	}
+
+	function calcularTotal() {
+		var total = 0;
+		$(".despesa-valor").each(function () {
+			var nome = $(this).attr("name") || "";
+			if (nome.indexOf("___") === -1) return; // ignora a linha modelo do pai-filho
+			total += paraNumero($(this).val());
+		});
+		$("#totalEstimado").val(total.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+	}
+
+	function paraNumero(valor) {
+		var n = parseFloat(String(valor || "").replace(/\./g, "").replace(",", "."));
+		return isNaN(n) ? 0 : n;
+	}
+
+	function paraData(valor) {
+		var p = String(valor || "").split("/");
+		if (p.length !== 3 || p[2].length !== 4) return null;
+		return new Date(parseInt(p[2], 10), parseInt(p[1], 10) - 1, parseInt(p[0], 10)).getTime();
+	}
+</script>
+</body>
+</html>
